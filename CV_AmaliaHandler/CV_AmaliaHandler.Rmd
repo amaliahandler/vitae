@@ -1,0 +1,82 @@
+---
+name: Amalia
+surname: Handler
+position: "Biologist"
+address: "200 SW 35th St, Corvallis, OR 97330"
+pronouns: she/her
+phone: +1 541 754 4687
+email: "handler.amalia@epa.gov"
+github: amaliahandler
+linkedin: amalia-handler-604073163
+date: "`r format(Sys.time(), '%B %Y')`"
+output: vitae::hyndman
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+options(tinytex.verbose = TRUE)
+
+library(dplyr)
+library(vitae)
+
+```
+
+# About Me
+
+ * Leads national-scale research on aquatic ecosystems
+ * Provides technical support in area of nutrient pollution and harmful algal blooms
+ * Mentoring and training next generation of aquatic scientists
+
+# Education
+
+```{r}
+tribble(
+  ~ Degree, ~ Year, ~ Institution, ~ Where,
+  "PhD Environmental Life Sciences", "2019", "Tempe, AZ", "Arizona State University",
+  "BA Environmental Science", "2013", "Lancaster, PA", "Franklin & Marshall College"
+) %>% 
+  detailed_entries(Degree, Year, Institution, Where)
+```
+
+# Professional
+
+```{r}
+tribble(
+  ~ Position, ~ Year, ~ Where, ~ Institution,
+  "Biolgist", "2022", "Corvallis, OR", "US EPA Office of Research and Development, Pacific Ecological Systems Division",
+  "Postdoctoral Fellow", "2020", "Corvallis, OR", "US EPA Office of Research and Development, Pacific Ecological Systems Division",
+  "Data Science Fellow", "2019", "Polson, MT", "Environmental Data Initiative, Flathead Lake Biological Station",
+  "Fellow", "2014", "Tempe, AZ", "National Science Foundation Graduate Research Fellowship Program"
+) %>% 
+  detailed_entries(Position, Year, Where, Institution)
+
+```
+
+
+
+# Awards
+
+```{r}
+tribble(
+  ~Year, ~Type, ~Desc,
+  1903, "Physics", "Awarded for her work on radioactivity with Pierre Curie and Henri Becquerel",
+  1911, "Chemistry", "Awarded for the discovery of radium and polonium"
+) %>% 
+  brief_entries(
+    glue::glue("Nobel Prize in {Type}"),
+    Year, 
+    Desc
+  )
+```
+
+# Publications
+
+```{r}
+library(dplyr)
+knitr::write_bib(c("vitae", "tibble"), "packages.bib")
+
+bibliography_entries("packages.bib") %>%
+  arrange(desc(author$family), issued)
+```

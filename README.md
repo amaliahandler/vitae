@@ -1,2 +1,2 @@
 # vitae
-Data-drive curriculum vitae for me! 
+Data-driven curriculum vitae for Amalia Handler
