@@ -1,6 +1,6 @@
 ---
 name: Amalia
-surname: Handler
+surname: Handler, PhD
 position: "Biologist"
 address: "200 SW 35th St, Corvallis, OR 97330"
 pronouns: she/her
@@ -20,6 +20,7 @@ options(tinytex.verbose = TRUE)
 
 library(dplyr)
 library(vitae)
+library(scholar)
 
 ```
 
@@ -45,10 +46,10 @@ tribble(
 ```{r}
 tribble(
   ~ Position, ~ Year, ~ Where, ~ Institution,
-  "Biolgist", "2022", "Corvallis, OR", "US EPA Office of Research and Development, Pacific Ecological Systems Division",
-  "Postdoctoral Fellow", "2020", "Corvallis, OR", "US EPA Office of Research and Development, Pacific Ecological Systems Division",
-  "Data Science Fellow", "2019", "Polson, MT", "Environmental Data Initiative, Flathead Lake Biological Station",
-  "Fellow", "2014", "Tempe, AZ", "National Science Foundation Graduate Research Fellowship Program"
+  "Biolgist", "2022-Present", "Corvallis, OR", "US EPA Office of Research and Development, Pacific Ecological Systems Division",
+  "Postdoctoral Fellow", "2020-2022", "Corvallis, OR", "US EPA Office of Research and Development, Pacific Ecological Systems Division",
+  "Data Science Fellow", "2019 Summer", "Polson, MT", "Environmental Data Initiative, Flathead Lake Biological Station",
+  "Fellow", "2014-2017", "Tempe, AZ", "National Science Foundation Graduate Research Fellowship Program"
 ) %>% 
   detailed_entries(Position, Year, Where, Institution)
 
@@ -74,7 +75,11 @@ tribble(
 # Publications
 
 ```{r}
-library(dplyr)
+# Get publication list from Google Scholar. Remove presentations at national meetings.
+pub_list <- get_publications(id = "u_8sUwsAAAAJ") |>
+  tibble() |>
+  filter(!journal %in% (c("", "AGU Fall Meeting Abstracts")))
+
 knitr::write_bib(c("vitae", "tibble"), "packages.bib")
 
 bibliography_entries("packages.bib") %>%
