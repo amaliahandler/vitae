@@ -21,14 +21,14 @@ options(tinytex.verbose = TRUE)
 library(dplyr)
 library(vitae)
 library(scholar)
+library(bibtex)
+library(stringr)
 
 ```
 
 # About Me
 
- * Leads national-scale research on aquatic ecosystems
- * Provides technical support in area of nutrient pollution and harmful algal blooms
- * Mentoring and training next generation of aquatic scientists
+Principle investigator of national-scale research on aquatic ecosystems with focus on nutrient pollution and harmful algal blooms. Fields of expertise include aquatic ecology, watershed science, and biogeochemistry. Technical skills include water chemistry analytical techniques, R/R Studio, geographic information systems (GIS), and spatial statistical modeling
 
 # Education
 
@@ -55,6 +55,35 @@ tribble(
 
 ```
 
+# Professional
+
+```{r}
+tribble(
+  ~ role, ~ company, ~ loc, ~ dates, ~ details,
+  
+  "Biologist", "Corvallis, OR", "US EPA, Office of Research and Development, Pacific Ecological Systems Division", "Jul 2022 - Present", 
+     list("Principal investigator researching water quality concerns in aquatic ecosystems including excess nutrient, low oxygen (hypoxia), and harmful algal blooms",
+          "Leading teams of 10+ to collaborate on research to address Agency client needs",
+          "Regular collaborator invited on research projects in area of expertise including harmful algal blooms and national datasets maintained by EPA",
+          "Provide technical support the National Aquatic Resource Survey, including developing a R program for a reproducible quality assurance process for water quality data in fulfilment of congressionally mandated monitoring program. Includes reviewing >20,000 observations of >20 water quality analytes from approximately 1,000 locations across the US on an annual basis to ensure consistency and accuracy",
+          "Respond to technical support request regarding agency partners in states, tribes, and territories on their water quality monitoring programs, especially relating to analyses for nutrients, ions, and algae (e.g., chlorophyll a). Includes retrieving and evaluating historic data to provide specifically tailored data quality objectives",
+          "Use R to compile geographic waterbody data (e.g., GIS) from multiple sources of water data including National Hydrography Dataset, National Aquatic Resource Survey program, and LakeCat and StreamCat datasets to analyze water quality data at the watershed scale using spatial statistical models",
+          "Represent the agency at national, regional, and local meetings conferences to present research findings, understand stakeholder concerns and needs, and build and maintain relationships with diverse partners",
+          "Delivered over 25 presentations on project progress and findings to internal and external audiences including 4 presentations at national professional meetings.",
+          "Published five peer-reviewed journal articles, three as first author, and one book chapter.",
+          "Co-led a Diversity, Equity, Inclusion, and Accessibility (DEIA) team across two EPA office locations. The team received the 2023 award for exceptional DEIA service from the Oregon Federal Executive Board.",
+          "Co-lead a peer mentoring group that meets monthly to strategize career advancement, organizational competencies, and forecasting future workforce needs for knowledge, skills, and abilities."
+    ),
+  
+  "Federal Postdoctoral Scholar", "Corvallis, OR", "US EPA, Office of Research and Development, Pacific Ecological Systems Division", "Jan 2020 - Jun 2022", 
+    list("Led research connecting satellite remote sensing and field survey data to predict the risk of toxic harmful algal blooms in >2,000 lakes across the conterminous US resulting in pee-reviewed publication.",
+         "Contributed to technical support requests from congress and EPA Office of Water by leveraging existing data and conducting a systematic review of literature relevant to the Clean Water Act.",
+         "Compiling and analyzing satellite imagery and national survey data using programming and lake location information through GIS.",
+         "Delivered 29 presentations on project progress and research findings to internal and external audiences including 4 presentations at national professional meetings.",
+         "Published three published peer-reviewed journal articles, including two as first author.")
+  )  |>  
+  detailed_entries(role, dates, company, loc, details)
+```
 
 
 # Awards
@@ -78,10 +107,32 @@ tribble(
 # Get publication list from Google Scholar. Remove presentations at national meetings.
 pub_list <- get_publications(id = "u_8sUwsAAAAJ") |>
   tibble() |>
-  filter(!journal %in% (c("", "AGU Fall Meeting Abstracts")))
+  filter(!journal %in% (c("", "AGU Fall Meeting Abstracts", "AGU"))) |>
+  mutate(first_author = str_extract(author, "(?<=\\s)\\w+"),
+         jour_code = str_extract(journal, "^\\w{5}")) |>
+  arrange(desc(year), author)
 
-knitr::write_bib(c("vitae", "tibble"), "packages.bib")
+bibtex_entries <- pub_list |>
+  rowwise() |>
+  mutate(
+    bibtex_entry = paste0(
+      "@article{",
+      first_author, "_", year, "_", jour_code, ",\n",
+      "  author = {", author, "},\n",
+      "  title = {", title, "},\n",
+      "  journal = {", journal, "},\n",
+      "  year = {", year, "}\n",
+      "}\n"
+    )
+  ) |>
+  pull(bibtex_entry)
 
-bibliography_entries("packages.bib") %>%
-  arrange(desc(author$family), issued)
+writeLines(bibtex_entries, "pub_list.bib")
+
+bibliography_entries("pub_list.bib") |>
+  arrange(desc(issued))
+
+# bibliography_entries("packages.bib") %>%
+#   arrange(desc(author$family), issued)
+
 ```
